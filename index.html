@@ -3,473 +3,942 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Core USD — USDCO</title>
+<title>USD Core — USDCO | USD-Pegged Digital Payment Token</title>
+<meta name="description" content="USD Core (USDCO) is a USD-pegged BEP-20 payment token on BNB Smart Chain. Fast, borderless, and built for real-world digital payments.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --bg: #0A0F1E;
-    --bg2: #0F1628;
-    --green: #02CC99;
-    --green-dim: rgba(2, 204, 153, 0.12);
-    --white: #F0F4FF;
-    --muted: #8899AA;
-    --border: rgba(2, 204, 153, 0.2);
-  }
+:root {
+  --bg: #F7F5F0;
+  --bg2: #EDEAE3;
+  --bg3: #E4E0D8;
+  --dark: #1A1E2A;
+  --dark2: #2C3245;
+  --gold: #B8882A;
+  --gold-dim: rgba(184, 136, 42, 0.08);
+  --gold-border: rgba(184, 136, 42, 0.2);
+  --text: #1A1E2A;
+  --muted: #6B7280;
+  --border: rgba(0,0,0,0.08);
+  --white: #FFFFFF;
+}
 
-  html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
 
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    background: rgba(10, 15, 30, 0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 60px;
+  background: rgba(247, 245, 240, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
 
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: -0.3px;
-  }
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--text);
+  text-decoration: none;
+}
 
-  .nav-logo img { width: 32px; height: 32px; }
+.nav-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--dark);
+  padding: 2px;
+}
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
 
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
 
-  .nav-links a:hover { color: var(--white); }
+.nav-links a:hover { color: var(--text); }
 
-  .nav-cta {
-    background: var(--green);
-    color: #0A0F1E;
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-  .nav-cta:hover { opacity: 0.85; }
+.nav-cta {
+  background: var(--dark);
+  color: #fff;
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
 
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 24px 80px;
-    position: relative;
-    overflow: hidden;
-  }
+.nav-cta:hover { background: var(--dark2); }
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -200px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(2, 204, 153, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
 
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--green-dim);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--green);
-    margin-bottom: 32px;
-    letter-spacing: 0.3px;
-  }
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
 
-  .hero-badge::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 65px;
+  left: 0; right: 0;
+  background: rgba(247, 245, 240, 0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px 24px;
+  z-index: 99;
+  flex-direction: column;
+  gap: 2px;
+}
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+.mobile-menu.open { display: flex; }
 
-  .hero h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(48px, 8vw, 88px);
-    font-weight: 700;
-    letter-spacing: -2px;
-    line-height: 1.05;
-    margin-bottom: 24px;
-  }
+.mobile-menu a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 11px 16px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
 
-  .hero h1 span { color: var(--green); }
+.mobile-menu a:hover { background: var(--bg2); color: var(--text); }
 
-  .hero-price {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(64px, 12vw, 120px);
-    font-weight: 700;
-    letter-spacing: -4px;
-    color: var(--green);
-    line-height: 1;
-    margin: 16px 0 8px;
-  }
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 120px 60px 80px;
+  gap: 60px;
+  background: linear-gradient(135deg, #F7F5F0 60%, #EDE8DF 100%);
+  position: relative;
+  overflow: hidden;
+}
 
-  .hero-price-label {
-    font-size: 14px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-  }
+.hero::before {
+  content: '';
+  position: absolute;
+  right: 5%;
+  top: 20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(184,136,42,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-  .hero-desc {
-    max-width: 520px;
-    font-size: 18px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 48px;
-  }
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
 
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+.hero-eyebrow::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: var(--gold);
+}
 
-  .btn-primary {
-    background: var(--green);
-    color: #0A0F1E;
-    padding: 14px 32px;
-    border-radius: 10px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    text-decoration: none;
-    transition: opacity 0.2s, transform 0.2s;
-  }
+.hero h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(36px, 4.5vw, 58px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.3px;
+  margin-bottom: 22px;
+  color: var(--text);
+}
 
-  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
 
-  .btn-secondary {
-    background: transparent;
-    color: var(--white);
-    padding: 14px 32px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 500;
-    font-size: 15px;
-    text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
-  }
+.hero-desc {
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 420px;
+  margin-bottom: 40px;
+}
 
-  .btn-secondary:hover {
-    border-color: var(--green);
-    background: var(--green-dim);
-  }
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-  /* STATS BAR */
-  .stats-bar {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-  }
+.btn-dark {
+  background: var(--dark);
+  color: #fff;
+  padding: 13px 28px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
 
-  .stat {
-    flex: 1;
-    max-width: 240px;
-    padding: 32px 24px;
-    text-align: center;
-    border-right: 1px solid var(--border);
-  }
+.btn-dark:hover { background: var(--dark2); }
 
-  .stat:last-child { border-right: none; }
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 13px 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
 
-  .stat-value {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 4px;
-  }
+.btn-outline:hover { border-color: rgba(0,0,0,0.3); background: var(--bg2); }
 
-  .stat-label {
-    font-size: 13px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+/* RATE CARD */
+.rate-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  position: relative;
+}
 
-  /* FEATURES */
-  .section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 100px 24px;
-  }
+.rate-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 12px 12px 0 0;
+}
 
-  .section-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 16px;
-  }
+.rate-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
 
-  .section-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(32px, 5vw, 48px);
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1.1;
-    margin-bottom: 64px;
-    max-width: 600px;
-  }
+.rate-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
+.rate-left-side { flex: 1; }
+.rate-right-side { flex: 1; text-align: right; }
 
-  .feature {
-    background: var(--bg);
-    padding: 40px 36px;
-    transition: background 0.2s;
-  }
+.rate-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
 
-  .feature:hover { background: var(--bg2); }
+.rate-token-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+}
 
-  .feature-icon {
-    width: 44px;
-    height: 44px;
-    background: var(--green-dim);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 20px;
-  }
+.rate-currency, .rate-token-symbol {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
 
-  .feature h3 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
+.rate-equals {
+  font-family: 'Sora', sans-serif;
+  font-size: 24px;
+  color: var(--muted);
+  opacity: 0.5;
+}
 
-  .feature p {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
+.rate-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
 
-  /* TOKEN INFO */
-  .token-section {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
+.rate-row:last-of-type { border-bottom: none; }
+.rate-row-label { color: var(--muted); }
 
-  .token-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    background: var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
+.rate-row-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+}
 
-  .token-row {
-    background: var(--bg2);
-    padding: 22px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.rate-row-value.green { color: #059669; }
 
-  .token-row-label {
-    font-size: 14px;
-    color: var(--muted);
-  }
+.rate-badge {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
 
-  .token-row-value {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--white);
-    word-break: break-all;
-    text-align: right;
-    max-width: 60%;
-  }
+.rate-badge::before {
+  content: '●';
+  color: #059669;
+  font-size: 7px;
+  animation: blink 2s infinite;
+}
 
-  .token-row-value.green { color: var(--green); }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
 
-  .contract-box {
-    margin-top: 32px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
 
-  .contract-label {
-    font-size: 12px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
+.stat {
+  padding: 32px 40px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
 
-  .contract-address {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    color: var(--green);
-    word-break: break-all;
-  }
+.stat:last-child { border-right: none; }
 
-  .copy-btn {
-    background: var(--green-dim);
-    border: 1px solid var(--border);
-    color: var(--green);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
-  }
+.stat-value {
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
 
-  .copy-btn:hover { background: rgba(2, 204, 153, 0.2); }
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
-  /* FOOTER */
-  footer {
-    text-align: center;
-    padding: 48px 24px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 14px;
-  }
+/* SECTIONS */
+.section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 96px 60px;
+}
 
-  footer a { color: var(--green); text-decoration: none; }
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
 
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 16px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-  }
+.section-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  color: var(--text);
+}
 
-  footer p { margin-top: 8px; }
+.section-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 500px;
+  margin-bottom: 52px;
+  line-height: 1.75;
+}
 
-  .email-line {
-    margin-top: 12px;
-    font-size: 13px;
-  }
+/* ABOUT */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
 
-  @media (max-width: 768px) {
-    nav { padding: 16px 20px; }
-    .nav-links { display: none; }
-    .stats-bar { flex-wrap: wrap; }
-    .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
-    .token-grid { grid-template-columns: 1fr; }
-    .contract-box { flex-direction: column; align-items: flex-start; }
-  }
+.about-card {
+  background: var(--white);
+  padding: 36px;
+  transition: background 0.2s;
+}
+
+.about-card:hover { background: #FDFCFA; }
+
+.about-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 18px;
+  margin-bottom: 16px;
+  background: var(--bg);
+}
+
+.about-card h3 {
+  font-family: 'Sora', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.about-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* DEX */
+.dex-bg {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.dex-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.dex-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.dex-card:hover {
+  border-color: var(--gold-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.dex-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.dex-logo img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.dex-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.dex-type {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* TOKENOMICS */
+.token-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.token-table {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.token-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.token-row:last-child { border-bottom: none; }
+.token-row-label { color: var(--muted); }
+
+.token-row-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.token-row-val.gold { color: var(--gold); }
+.token-row-val.green { color: #059669; }
+
+.contract-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 14px;
+}
+
+.contract-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.contract-addr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  word-break: break-all;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.copy-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.copy-btn:hover { background: var(--bg2); }
+
+.token-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.highlight {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 18px 22px;
+}
+
+.highlight-value {
+  font-family: 'Sora', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.highlight-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ROADMAP */
+.roadmap-bg {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.roadmap-item {
+  background: var(--white);
+  padding: 30px 24px;
+}
+
+.roadmap-quarter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.roadmap-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+.roadmap-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.roadmap-list li {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.roadmap-list li::before {
+  content: '—';
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.roadmap-item.done .roadmap-quarter { color: #059669; }
+.roadmap-item.done .roadmap-list li::before { color: #059669; }
+
+/* FAQ */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.faq-item { background: var(--white); }
+
+.faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 26px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  transition: background 0.2s;
+}
+
+.faq-q:hover { background: var(--bg); }
+
+.faq-toggle {
+  color: var(--gold);
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: 16px;
+  transition: transform 0.2s;
+}
+
+.faq-a {
+  padding: 0 26px 20px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  display: none;
+}
+
+.faq-item.open .faq-a { display: block; }
+.faq-item.open .faq-q { background: var(--bg); }
+.faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  background: var(--dark);
+  padding: 60px;
+}
+
+.footer-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 48px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.footer-logo img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  padding: 2px;
+}
+
+.footer-brand p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.75;
+  max-width: 300px;
+}
+
+.footer-col h4 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 18px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: #fff; }
+
+.footer-bottom {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+}
+
+.footer-bottom a { color: rgba(255,255,255,0.35); text-decoration: none; }
+.footer-bottom a:hover { color: rgba(255,255,255,0.7); }
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  nav { padding: 14px 24px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  .hero { grid-template-columns: 1fr; padding: 90px 24px 60px; }
+  .hero-right { display: none; }
+
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat { border-right: none; border-bottom: 1px solid var(--border); }
+
+  .section { padding: 60px 24px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .dex-grid { grid-template-columns: 1fr 1fr; }
+  .token-grid { grid-template-columns: 1fr; }
+  .roadmap-grid { grid-template-columns: 1fr 1fr; }
+
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  footer { padding: 40px 24px; }
+}
+
+@media (max-width: 500px) {
+  .roadmap-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">
+  <a href="#" class="nav-logo">
     <img src="https://raw.githubusercontent.com/tokenstech/USDCore/refs/heads/main/usdco.svg" alt="USDCO">
-    Core USD
-  </div>
+    USD Core
+  </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#token">Token</a></li>
-    <li><a href="https://bscscan.com/token/0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">BscScan</a></li>
+    <li><a href="#buy">Buy</a></li>
+    <li><a href="#tokenomics">Tokenomics</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
-  <a class="nav-cta" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">Buy USDCO</a>
+  <div class="nav-right">
+    <a class="nav-cta" href="https://pancakeswap.finance/swap?outputCurrency=0x7fd2902e444475c266abf6014c19809f411ccd39&chain=bsc&inputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" target="_blank">Buy USDCO</a>
+    <div class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
 </nav>
 
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="document.getElementById('mobileMenu').classList.remove('open')">About</a>
+  <a href="#buy" onclick="document.getElementById('mobileMenu').classList.remove('open')">Where to Buy</a>
+  <a href="#tokenomics" onclick="document.getElementById('mobileMenu').classList.remove('open')">Tokenomics</a>
+  <a href="#roadmap" onclick="document.getElementById('mobileMenu').classList.remove('open')">Roadmap</a>
+  <a href="#faq" onclick="document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
+</div>
+
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-badge">Live on BNB Smart Chain</div>
-  <h1>Digital payments<br>built on <span>stability</span></h1>
-  <div class="hero-price">$1.00</div>
-  <div class="hero-price-label">USD — 1:1 peg</div>
-  <p class="hero-desc">Core USD is a BEP-20 payment token pegged to the US Dollar. Fast, borderless, and built for real use.</p>
-  <div class="hero-actions">
-    <a class="btn-primary" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">Buy on PancakeSwap</a>
-    <a class="btn-secondary" href="https://bscscan.com/token/0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">View Contract</a>
+  <div class="hero-left">
+    <div class="hero-eyebrow">BNB Smart Chain · BEP-20</div>
+    <h1>Digital payments backed by the <em>US Dollar</em></h1>
+    <p class="hero-desc">USD Core is a USD-pegged payment token designed for fast, borderless, and low-cost digital transactions. One token. One dollar. Always.</p>
+    <div class="hero-actions">
+      <a class="btn-dark" href="https://pancakeswap.finance/swap?outputCurrency=0x7fd2902e444475c266abf6014c19809f411ccd39&chain=bsc&inputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" target="_blank">Buy on PancakeSwap</a>
+      <a class="btn-outline" href="https://bscscan.com/token/0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">View Contract</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="rate-card">
+      <div class="rate-label">Current Exchange Rate</div>
+      <div class="rate-main">
+        <div class="rate-left-side">
+          <div class="rate-value">1.00</div>
+          <div class="rate-currency">US Dollar (USD)</div>
+        </div>
+        <div class="rate-equals">=</div>
+        <div class="rate-right-side">
+          <div class="rate-token-value">1</div>
+          <div class="rate-token-symbol">USD Core (USDCO)</div>
+        </div>
+      </div>
+      <div class="rate-row">
+        <span class="rate-row-label">Network</span>
+        <span class="rate-row-value">BNB Smart Chain</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-row-label">Buy Tax</span>
+        <span class="rate-row-value green">0.00%</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-row-label">Sell Tax</span>
+        <span class="rate-row-value green">0.00%</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-row-label">Contract</span>
+        <span class="rate-row-value">0x7FD2...Ccd39</span>
+      </div>
+      <div class="rate-badge">Live on BNB Smart Chain</div>
+    </div>
   </div>
 </section>
 
-<div class="stats-bar">
+<!-- STATS -->
+<div class="stats">
   <div class="stat">
     <div class="stat-value">$1.00</div>
     <div class="stat-label">Token Price</div>
@@ -483,104 +952,236 @@
     <div class="stat-label">Buy / Sell Tax</div>
   </div>
   <div class="stat">
-    <div class="stat-value">BNB Chain</div>
-    <div class="stat-label">Network</div>
+    <div class="stat-value">4 DEX</div>
+    <div class="stat-label">Listings</div>
   </div>
 </div>
 
+<!-- ABOUT -->
 <section class="section" id="about">
-  <div class="section-label">Why Core USD</div>
+  <div class="section-eyebrow">Why USD Core</div>
   <h2 class="section-title">Built for payments, not speculation.</h2>
-  <div class="features-grid">
-    <div class="feature">
-      <div class="feature-icon">⚡</div>
-      <h3>Instant Transfers</h3>
-      <p>Send USDCO anywhere in the world in seconds with near-zero fees on BNB Smart Chain.</p>
+  <p class="section-subtitle">USD Core brings the stability of the US Dollar to the speed and efficiency of BNB Smart Chain.</p>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="about-icon">⚡</div>
+      <h3>Instant Settlement</h3>
+      <p>Transactions confirm in seconds on BNB Smart Chain — no waiting, no intermediaries, no borders.</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🔒</div>
+    <div class="about-card">
+      <div class="about-icon">⚖️</div>
       <h3>USD Pegged</h3>
-      <p>Every USDCO token is backed 1:1 to the US Dollar, providing stability you can rely on.</p>
+      <p>Every USDCO token maintains a 1:1 parity with the US Dollar, giving you the stability you need for everyday payments.</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">✅</div>
-      <h3>Verified Contract</h3>
-      <p>Open-source, fully verified smart contract on BscScan. No hidden functions, no surprises.</p>
+    <div class="about-card">
+      <div class="about-icon">🔍</div>
+      <h3>Fully Verified</h3>
+      <p>Open-source smart contract, fully verified on BscScan. Every line of code is publicly auditable — no hidden functions.</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">💸</div>
-      <h3>Zero Tax</h3>
-      <p>0% buy and sell tax. What you send is what they receive — always.</p>
+    <div class="about-card">
+      <div class="about-icon">💸</div>
+      <h3>Zero Transfer Tax</h3>
+      <p>0% buy and sell tax. The amount you send is exactly what the recipient receives. Always.</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🌐</div>
+    <div class="about-card">
+      <div class="about-icon">🌐</div>
       <h3>Borderless</h3>
-      <p>No banks, no intermediaries. Transfer value globally with nothing standing in the way.</p>
+      <p>Send value anywhere in the world. No banks, no SWIFT, no delays. Just a wallet address and a transaction.</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🏦</div>
-      <h3>For Businesses</h3>
-      <p>Accept crypto payments from customers in a stable currency that tracks the US Dollar.</p>
+    <div class="about-card">
+      <div class="about-icon">🏢</div>
+      <h3>Business Ready</h3>
+      <p>Designed for merchants and businesses that need a reliable, dollar-denominated payment instrument on-chain.</p>
     </div>
   </div>
 </section>
 
-<div class="token-section">
-  <div class="section" id="token">
-    <div class="section-label">Token Info</div>
-    <h2 class="section-title">Everything you need to know.</h2>
-    <div class="token-grid">
-      <div class="token-row">
-        <span class="token-row-label">Name</span>
-        <span class="token-row-value">Core USD</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Symbol</span>
-        <span class="token-row-value green">USDCO</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Network</span>
-        <span class="token-row-value">BNB Smart Chain</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Standard</span>
-        <span class="token-row-value">BEP-20</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Total Supply</span>
-        <span class="token-row-value">20,000,000,000</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Decimals</span>
-        <span class="token-row-value">18</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Buy Tax</span>
-        <span class="token-row-value green">0%</span>
-      </div>
-      <div class="token-row">
-        <span class="token-row-label">Sell Tax</span>
-        <span class="token-row-value green">0%</span>
-      </div>
-    </div>
-
-    <div class="contract-box">
-      <div>
-        <div class="contract-label">Contract Address</div>
-        <div class="contract-address">0x7FD2902E444475c266abf6014C19809F411Ccd39</div>
-      </div>
-      <button class="copy-btn" onclick="navigator.clipboard.writeText('0x7FD2902E444475c266abf6014C19809F411Ccd39').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)})">Copy</button>
+<!-- WHERE TO BUY -->
+<div class="dex-bg" id="buy">
+  <div class="section">
+    <div class="section-eyebrow">Where to Buy</div>
+    <h2 class="section-title">Available on 4 decentralized exchanges.</h2>
+    <p class="section-subtitle">Trade USDCO directly from your wallet — no registration required.</p>
+    <div class="dex-grid">
+      <a class="dex-card" href="https://pancakeswap.finance/swap?outputCurrency=0x7fd2902e444475c266abf6014c19809f411ccd39&chain=bsc&inputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" target="_blank">
+        <div class="dex-logo">
+          <img src="https://assets.coingecko.com/coins/images/12632/small/pancakeswap-cake-logo_%281%29.png" alt="PancakeSwap" onerror="this.parentElement.textContent='🥞'">
+        </div>
+        <div class="dex-name">PancakeSwap</div>
+        <div class="dex-type">DEX · BNB Chain</div>
+      </a>
+      <a class="dex-card" href="https://web3.okx.com/tr/token/bsc/0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">
+        <div class="dex-logo">
+          <img src="https://assets.coingecko.com/markets/images/96/small/WeChat_Image_20220117220452.png" alt="OKX" onerror="this.parentElement.textContent='⭕'">
+        </div>
+        <div class="dex-name">OKX DEX</div>
+        <div class="dex-type">DEX · Multi-chain</div>
+      </a>
+      <a class="dex-card" href="https://kyberswap.com/swap/bnb/-to-0x7fd2902e444475c266abf6014c19809f411ccd39swap/bnb/-to-0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">
+        <div class="dex-logo">
+          <img src="https://assets.coingecko.com/coins/images/14899/small/RwdVsGcw_400x400.jpg" alt="KyberSwap" onerror="this.parentElement.textContent='🔷'">
+        </div>
+        <div class="dex-name">KyberSwap</div>
+        <div class="dex-type">DEX · Multi-chain</div>
+      </a>
+      <a class="dex-card" href="https://www.mexc.com/dex/onchain/bsc/0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">
+        <div class="dex-logo">
+          <img src="https://assets.coingecko.com/markets/images/409/small/MEXC_Global_Logo.png" alt="MEXC" onerror="this.parentElement.textContent='Ⓜ️'">
+        </div>
+        <div class="dex-name">MEXC DEX+</div>
+        <div class="dex-type">DEX · BNB Chain</div>
+      </a>
     </div>
   </div>
 </div>
 
-<footer>
-  <div class="footer-logo">
-    <img src="https://raw.githubusercontent.com/tokenstech/USDCore/refs/heads/main/usdco.svg" width="28" height="28" alt="USDCO">
-    Core USD
+<!-- TOKENOMICS -->
+<section class="section" id="tokenomics">
+  <div class="section-eyebrow">Tokenomics</div>
+  <h2 class="section-title">Simple, transparent, fair.</h2>
+  <p class="section-subtitle">No complex vesting schedules. No hidden allocations. A clean token structure designed for real-world use.</p>
+  <div class="token-grid">
+    <div>
+      <div class="token-table">
+        <div class="token-row"><span class="token-row-label">Token Name</span><span class="token-row-val">USD Core</span></div>
+        <div class="token-row"><span class="token-row-label">Symbol</span><span class="token-row-val gold">USDCO</span></div>
+        <div class="token-row"><span class="token-row-label">Standard</span><span class="token-row-val">BEP-20</span></div>
+        <div class="token-row"><span class="token-row-label">Network</span><span class="token-row-val">BNB Smart Chain</span></div>
+        <div class="token-row"><span class="token-row-label">Total Supply</span><span class="token-row-val">20,000,000,000</span></div>
+        <div class="token-row"><span class="token-row-label">Decimals</span><span class="token-row-val">18</span></div>
+        <div class="token-row"><span class="token-row-label">Buy Tax</span><span class="token-row-val green">0%</span></div>
+        <div class="token-row"><span class="token-row-label">Sell Tax</span><span class="token-row-val green">0%</span></div>
+      </div>
+      <div class="contract-card">
+        <div class="contract-card-label">Contract Address</div>
+        <div class="contract-addr">0x7FD2902E444475c266abf6014C19809F411Ccd39</div>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('0x7FD2902E444475c266abf6014C19809F411Ccd39').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Address',2000)})">Copy Address</button>
+      </div>
+    </div>
+    <div class="token-highlights">
+      <div class="highlight"><div class="highlight-value">20,000,000,000</div><div class="highlight-label">Fixed Total Supply</div></div>
+      <div class="highlight"><div class="highlight-value">$1.00</div><div class="highlight-label">USD Peg Target</div></div>
+      <div class="highlight"><div class="highlight-value">0%</div><div class="highlight-label">Transaction Tax</div></div>
+      <div class="highlight"><div class="highlight-value">100%</div><div class="highlight-label">Circulating Supply</div></div>
+    </div>
   </div>
-  <p>© 2026 Core USD. All rights reserved.</p>
-  <p class="email-line">Official Email: <a href="mailto:usdcoretoken@gmail.com">usdcoretoken@gmail.com</a></p>
+</section>
+
+<!-- ROADMAP -->
+<div class="roadmap-bg" id="roadmap">
+  <div class="section">
+    <div class="section-eyebrow">Roadmap</div>
+    <h2 class="section-title">Where we are. Where we're going.</h2>
+    <p class="section-subtitle">A clear, phased path from launch to full ecosystem integration.</p>
+    <div class="roadmap-grid">
+      <div class="roadmap-item done">
+        <div class="roadmap-quarter">Q3 2026 · Completed</div>
+        <div class="roadmap-title">Launch</div>
+        <ul class="roadmap-list">
+          <li>Token deployment on BNB Smart Chain</li>
+          <li>Smart contract verification</li>
+          <li>PancakeSwap liquidity pool</li>
+          <li>GeckoTerminal listing</li>
+          <li>Website launch</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-quarter">Q4 2026</div>
+        <div class="roadmap-title">Growth</div>
+        <ul class="roadmap-list">
+          <li>CoinGecko listing</li>
+          <li>CoinMarketCap listing</li>
+          <li>BscScan token page</li>
+          <li>Expand holder base</li>
+          <li>Community growth</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-quarter">Q1 2027</div>
+        <div class="roadmap-title">Expansion</div>
+        <ul class="roadmap-list">
+          <li>CEX listings</li>
+          <li>Business payment integrations</li>
+          <li>Increased liquidity pools</li>
+          <li>Security audit</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-quarter">Q2 2027</div>
+        <div class="roadmap-title">Ecosystem</div>
+        <ul class="roadmap-list">
+          <li>Payment API for merchants</li>
+          <li>Multi-chain expansion</li>
+          <li>EUR-pegged token launch</li>
+          <li>Full reserve transparency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-eyebrow">FAQ</div>
+  <h2 class="section-title">Frequently asked questions.</h2>
+  <p class="section-subtitle">Everything you need to know about USD Core.</p>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What is USD Core (USDCO)?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">USD Core (USDCO) is a BEP-20 token on BNB Smart Chain designed to maintain a 1:1 parity with the US Dollar. It is built for use as a digital payment instrument, enabling fast, borderless, and low-cost transactions.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does the USD peg work?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">The USD peg is maintained operationally: each USDCO token is issued and redeemed at a 1:1 rate with the US Dollar. Liquidity on PancakeSwap supports market price stability.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is the smart contract audited and verified?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">The USD Core smart contract is fully open-source and verified. The source code is publicly available on BscScan for anyone to review. An independent security audit is scheduled for Q1 2027.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are there any fees for buying or selling USDCO?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">No. USD Core has 0% buy and sell tax. You only pay the standard BNB Smart Chain gas fee, which is typically a fraction of a cent.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Which wallets support USDCO?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Any BNB Smart Chain-compatible wallet supports USDCO, including Trust Wallet, MetaMask, and Binance Wallet. Simply add the contract address to your wallet to see your balance.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Where can I buy USDCO?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">USDCO is available on PancakeSwap, OKX DEX, KyberSwap, and MEXC DEX+. You can also receive USDCO directly from our team for business payment purposes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="https://raw.githubusercontent.com/tokenstech/USDCore/refs/heads/main/usdco.svg" alt="USDCO">
+        USD Core
+      </div>
+      <p>A USD-pegged digital payment token built on BNB Smart Chain. Fast, transparent, and designed for real-world use.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Token</h4>
+      <a href="#about">About</a>
+      <a href="#tokenomics">Tokenomics</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="https://bscscan.com/token/0x7FD2902E444475c266abf6014C19809F411Ccd39" target="_blank">BscScan</a>
+    </div>
+    <div class="footer-col">
+      <h4>Trade</h4>
+      <a href="https://pancakeswap.finance/swap?outputCurrency=0x7fd2902e444475c266abf6014c19809f411ccd39&chain=bsc&inputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c" target="_blank">PancakeSwap</a>
+      <a href="https://web3.okx.com/tr/token/bsc/0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">OKX DEX</a>
+      <a href="https://kyberswap.com/swap/bnb/-to-0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">KyberSwap</a>
+      <a href="https://www.mexc.com/dex/onchain/bsc/0x7fd2902e444475c266abf6014c19809f411ccd39" target="_blank">MEXC DEX+</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 USD Core. All rights reserved.</span>
+    <span>Official Email: <a href="mailto:info@usdcotoken.com">info@usdcotoken.com</a></span>
+  </div>
 </footer>
 
 </body>
